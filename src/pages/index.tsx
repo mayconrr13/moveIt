@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head';
 
@@ -6,11 +6,13 @@ import CompletedChallenges from "../components/CompletedChallenges";
 import Countdown from "../components/Countdown";
 import ExperienceBar from "../components/ExperienceBar";
 import Profile from "../components/Profile";
+import Lateralbar from "../components/Lateralbar";
 
 import styles from '../styles/pages/Home.module.css'
 import ChallengeBox from "../components/ChallengeBox";
 import CountdownProvider from "../context/CountdownContext";
 import ChallengesProvider from '../context/ChallengesContext';
+import Landing from '../components/Landing/Landing';
 
 interface HomeProps {
   level: number,
@@ -19,28 +21,44 @@ interface HomeProps {
 }
 
 export default function Home(props: HomeProps) {
+  const [goToHome, setGoToHome] = useState(false);
+
+  function initiateApp() {
+      setGoToHome(true)
+  }
+
   return (
     <ChallengesProvider level={props.level} currentExperience={props.currentExperience} challengesCompleted={props.challengesCompleted}>
-      <div className={styles.container}>
-        <Head>
-          <title>Início | moveIt</title>
-        </Head>
+      {!goToHome 
+      ?
+      <Landing initiateApp={initiateApp} />
+      :
+      <div className={styles.complete}>
+          <Head>
+            <title>Início | moveIt</title>
+          </Head>
 
-        <ExperienceBar />
-
-        <CountdownProvider>
-          <section>
-            <div>
-              <Profile />
-              <CompletedChallenges />
-              <Countdown />
-            </div>
-            <div>
-              <ChallengeBox />
-            </div>
-          </section>
-        </CountdownProvider>
+        <Lateralbar />
+  
+        <div className={styles.container}>
+  
+          <ExperienceBar />
+  
+          <CountdownProvider>
+            <section>
+              <div>
+                <Profile />
+                <CompletedChallenges />
+                <Countdown />
+              </div>
+              <div>
+                <ChallengeBox />
+              </div>
+            </section>
+          </CountdownProvider>
+        </div>
       </div>
+      }
     </ChallengesProvider>
   )
 }
